@@ -1,0 +1,14 @@
+torch>=2.1
+torchvision
+transformers>=4.37
+peft>=0.8
+open_clip_torch>=2.23
+timm>=0.9
+sentencepiece
+tokenizers
+pyyaml
+numpy
+pillow
+pycocoevalcap
+nltk
+faiss-cpu

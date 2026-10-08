@@ -1,0 +1,72 @@
+seed: 42
+device: auto
+output_dir: outputs/mimic_cxr
+data:
+  ann_path: data/mimic_cxr/annotation.json
+  image_dir: data/mimic_cxr/images
+  label_path: data/mimic_cxr/chexpert_labels.json
+  max_views: 1
+  max_report_tokens: 128
+  prompt_prefix: "A chat between a curious human and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the human's questions. USER: Describe the findings of this chest X-ray image."
+  prompt_suffix: "ASSISTANT:"
+  num_workers: 4
+model:
+  visual_encoder: hf-hub:microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224
+  image_size: 224
+  llm: lmsys/vicuna-7b-v1.5
+  tokenizer: null
+  projector_ckpt: null
+  torch_dtype: bfloat16
+  attn_implementation: sdpa
+  text_encoder: medicalai/ClinicalBERT
+  concepts: null
+  split_layer: 16
+  lora_rank: 16
+  lora_alpha: 32
+  lora_dropout: 0.1
+  probe_normalize: true
+  tau_p: 0.1
+  tau_g_start: 1.0
+  tau_g_end: 0.1
+  top_r: 128
+  tau_r_init: 0.07
+  n_heads: 8
+  gate_w_init: 1.0
+  gate_b_init: -4.0
+  ablation:
+    retrieval: hint
+    soft_routing: true
+    contrastive_query: true
+    dynamic_gate: true
+memory:
+  momentum: 0.9
+  search: faiss
+  faiss_nlist: 1024
+  faiss_nprobe: 32
+  refresh_every_epochs: 1
+  dtype: float16
+train:
+  epochs: 50
+  batch_size: 2
+  grad_accum_steps: 8
+  lr: 3.0e-5
+  weight_decay: 0.01
+  warmup_steps: 1000
+  max_grad_norm: 1.0
+  bf16: true
+  lambda_nce: 0.1
+  lambda_ent: 0.05
+  gamma: 0.3
+  beta: 0.1
+  tau_c: 0.07
+  kl_smoothing: 0.1
+  save_every_epochs: 5
+  select_by: loss
+  val_generation_limit: null
+  log_every: 200
+eval:
+  batch_size: 4
+  max_new_tokens: 120
+  num_beams: 4
+  no_repeat_ngram_size: 3
+  length_penalty: 1.0
